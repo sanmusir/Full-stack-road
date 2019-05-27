@@ -134,12 +134,16 @@ location / {
 参考链接:
 
 [http://tengine.taobao.org/book/chapter_02.html]
+
 [http://nginx.org/en/docs/http/ngx_http_rewrite_module.html]
 
-Rewrite规则
-rewrite功能就是，使用nginx提供的全局变量或自己设置的变量，结合正则表达式和标志位实现url重写以及重定向。rewrite只能放在server{},location{},if{}中，并且只能对域名后边的除去传递的参数外的字符串起作用，例如 http://seanlook.com/a/we/index.php?id=1&u=str 只对/a/we/index.php重写。语法rewrite regex replacement [flag];
+## Rewrite规则
+rewrite功能就是，使用nginx提供的全局变量或自己设置的变量，结合正则表达式和标志位实现url重写以及重定向。rewrite只能放在server{},location{},if{}中，并且只能对域名后边的除去传递的参数外的字符串起作用，例如 http://seanlook.com/a/we/index.php?id=1&u=str 只对/a/we/index.php重写。语法
+```
+rewrite regex replacement [flag];
+```
 如果相对域名或参数字符串起作用，可以使用全局变量匹配，也可以使用proxy_pass反向代理。
-表明看rewrite和location功能有点像，都能实现跳转，主要区别在于rewrite是在同一域名内更改获取资源的路径，而location是对一类路径做控制访问或反向代理，可以proxy_pass到其他机器。很多情况下rewrite也会写在location里，它们的执行顺序是：
+表面看rewrite和location功能有点像，都能实现跳转，主要区别在于rewrite是在同一域名内更改获取资源的路径，而location是对一类路径做控制访问或反向代理，可以proxy_pass到其他机器。很多情况下rewrite也会写在location里，它们的执行顺序是：
 执行server块的rewrite指令
 执行location匹配
 执行选定的location中的rewrite指令
@@ -153,8 +157,10 @@ permanent : 返回301永久重定向，地址栏会显示跳转后的地址
 last一般写在server和if中，而break一般使用在location中
 last不终止重写后的url匹配，即新的url会再从server走一遍匹配流程，而break终止重写后的匹配
 break和last都能组织继续执行后面的rewrite指令
-if指令与全局变量
-if判断指令
+
+### if指令与全局变量
+#### if判断指令
+
 语法为if(condition){...}，对给定的条件condition进行判断。如果为真，大括号内的rewrite指令将被执行，if条件(conditon)可以是如下任何内容：
 当表达式只是一个变量时，如果值为空或任何以0开头的字符串都会当做false
 直接比较变量和内容时，使用=或!=
@@ -164,6 +170,7 @@ if判断指令
 -e和!-e用来判断是否存在文件或目录
 -x和!-x用来判断文件是否可执行
 例如：
+```
 if ($http_user_agent ~ MSIE) {
     rewrite ^(.*)$ /msie/$1 break;
 } //如果UA包含"MSIE"，rewrite请求到/msid/目录下
@@ -195,8 +202,10 @@ location ~* \.(gif|jpg|png|swf|flv)$ {
         return 404;
     } //防盗链
 }
+```
 
-全局变量
+#### 全局变量
+
 下面是可以用作if判断的全局变量
 $args ： #这个变量等于请求行中的参数，同$query_string
 $content_length ： 请求头中的Content-length字段。
@@ -226,7 +235,10 @@ $request_uri：http://localhost:88/test1/test2/test.php
 $document_uri：/test1/test2/test.php
 $document_root：/var/www/html
 $request_filename：/var/www/html/test1/test2/test.php
-常用正则
+
+### 常用正则
+
+```
 . ： 匹配除换行符以外的任意字符
 ? ： 重复0次或1次
 + ： 重复1次或更多次
@@ -239,8 +251,11 @@ $ ： 匹配字符串的介绍
 [c] ： 匹配单个字符c
 [a-z] ： 匹配a-z小写字母的任意一个
 小括号()之间匹配的内容，可以在后面通过$1来引用，$2表示的是前面第二个()里的内容。正则里面容易让人困惑的是\转义特殊字符。
-rewrite实例
+```
+
+### rewrite实例
 例1：
+```
 http {
     # 定义image日志格式
     log_format imagelog '[$time_local] ' $image_file ' ' $image_type ' ' $body_bytes_sent ' ' $status;
@@ -272,7 +287,7 @@ http {
                 return 404 "image not found\n";
         }
 }
-
+```
 
 对形如/images/ef/uh7b3/test.png的请求，重写到/data?file=test.png，于是匹配到location /data，先看/data/images/test.png文件存不存在，如果存在则正常响应，如果不存在则重写tryfiles到新的image404 location，直接返回404状态码。
 例2：
