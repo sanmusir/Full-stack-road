@@ -1,3 +1,4 @@
+```
 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;#脚本文件请求的路径,也就是说当访问127.0.0.1/index.php的时候，需要读取网站根目录下面的index.php文件，如果没有配置这一配置项时，nginx不回去网站根目录下访问.php文件，所以返回空白
 fastcgi_param QUERY_STRING $query_string;                        #请求的参数;如?app=123
 fastcgi_param REQUEST_METHOD $request_method;                    #请求的动作(GET,POST)
@@ -20,6 +21,4 @@ fastcgi_param SERVER_PORT $server_port;                          #服务器端�
 fastcgi_param SERVER_NAME $server_name;                          #服务器名，域名在server配置中指定的server_name
 
 fastcgi_param PATH_INFO $path_info;                             #可自定义变量
-
--- PHP only, required if PHP was built with --enable-force-cgi-redirect
-fastcgi_param REDIRECT_STATUS 200;
+```
