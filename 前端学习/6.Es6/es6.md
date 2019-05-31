@@ -1,4 +1,5 @@
 ### var let const
+
 var a = 10;  
 var 可以重复定义赋值 作用域：函数  
 let 不可以重复定义，可赋值 作用域：块级  
@@ -13,6 +14,7 @@ const Ljj = object.freeze(person)
 (function(){})()  
 
 可使用let来限定作用域
+
 ```
 for(let i = 0;i < 10;i++){
   console.log(i);
@@ -23,15 +25,18 @@ for(let i = 0;i < 10;i++){
 
 ```
 变量提升
+
 ```
 console.log(name); //undefined
 var name = 'sanmu';
 
 console.log(name); //RefrenceError
 let|const name = 'sanmu';
+
 ```
 
 ### 箭头函数
+
 去掉function 加箭头
 单个参数可去括号，多个参数逗号隔开
 =>
@@ -45,7 +50,9 @@ let|const name = 'sanmu';
  const who = (name) => {console.log(name);}
  who('xiaom');
 ```
+
 隐式返回
+
 ```
   const numbers = [1,2,3,4];
   const double2 = numbers.map((num) => num * 2);
@@ -85,9 +92,11 @@ sanmu.printLike()
 
 
 ### 模板字符串
+
 `${变量} 字符串`
 
 ### 标签模板字符串
+
 标签`${变量} 字符串`
 ```
 const name = 'sanmu';
@@ -101,6 +110,180 @@ function highlight(strings, ...values){
 }
 ```
 ### 新增的字符串函数
+
 string.startsWith('要匹配字符串','起始位置')
 string.endsWith('要匹配字符串','结束位置')
 string.includes('要查询的字符串','起始位置')
+string.repeat(10) 重复10次
+
+### 对象解构
+
+```
+const sanmu = {
+  name: 'sanmu',
+  age: 18
+}
+const {name:newname, age, sex = 'man'} = sanmu;
+```
+### 数组解构
+
+```
+const numbers = [1,2,3,4];
+const [one,,two] = numbers;
+const [one, ...others] = numbers;
+
+let a = 1;
+let b = 2;
+[a,b] = [b,a];
+```
+
+### for of
+
+通常循环数组的做法：
+- for循环
+- 数组自带函数forEach  不支持 终止或跳过循环
+- for in 循环   会便利数组上的非数字属性
+
+for of （不支持对象）
+```
+const fruits = ['a','b','c'];
+for(let fruit of fruits){
+  console.log(fruit)
+}
+for(let[index,value] of fruits.entries()){
+    console.log(index);
+    console.log(value);
+}
+```
+
+### 数组新方法
+
+Array.from(目标数组,要执行的方法) 将类数组转化为数组，调用方法执行  
+Array.of(1) 创建数组[1],而不是长度为1的数组  
+.find(回调函数) 回调函数返回true 就停止查询 返回查询到的值
+.findIndex(回调函数) 回调函数返回true 就停止查询 返回查询到的index
+.some(回调函数) 只需要一个满足即可返回true
+.every(回调函数) 全部满足才反馈true
+
+### 剩余参数
+
+...args
+
+### 扩展运算符
+
+...  把一个可遍历对象每个元素扩展到数组或函数中
+let a = [1,2,3];
+let b = [5,6];
+let c = [...a,4,...b];
+console.log(c);
+
+### 对象字面量
+
+```
+const name = 'sanmu';
+const age = 2;
+const sanmu = {
+  name: name,  
+  age         //属性和值一样可以省略掉
+  getAge: function(){
+    console.log(this.age)
+  },
+  getName(){
+      console.log(this.age)  //省略掉function
+  }
+}
+```
+计算属性
+
+```
+const keys = ['sanmu','zm'];
+const values = [18,10];
+const age = {
+  [keys.shift()]:values.shift(),
+  [keys.shift()]:values.shift()
+}
+```
+
+### promise
+
+Ajax 返回的顺序不确定
+
+```
+<head>
+	<title>Promise Intro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		let user;
+
+		$.get('https://api.github.com/users',data=>{
+			console.log('fetched all users');
+			user = data[0].login;
+		});
+
+		$.get(`https://api.github.com/users/${user}/repos`,data => {
+			console.log('fetched user repos');
+			console.log(data);
+		})
+	</script>
+</body>
+```
+嵌套写法，写在第一个请求的回调函数里，嵌套越多越混乱，会坠入回调地狱。
+```
+<script type="text/javascript">
+		let user;
+
+		$.get('https://api.github.com/users',data=>{
+			console.log('fetched all users');
+			user = data[0].login;
+
+			$.get(`https://api.github.com/users/${user}/repos`,data => {
+			console.log('fetched user repos');
+			console.log(data);
+		})
+		});
+
+	</script>
+```
+
+为解决回调不确定性和回调地狱，ES6提供了Promise承诺，
+用axios包来做下
+.then()//事件监听成功之后执行 .catch()//返回错误信息
+```
+<head>
+	<title>Promise Intro</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		const usersPromise = axios.get('https://api.github.com/user');
+
+		//$('p').on('click',function(){})  用.then()方法
+		usersPromise
+		.then(reponse =>{
+			username =reponse.data[0].login;
+			return axios.get(`https://api.github.com/users/${username}/repos`);
+		})
+		.then(reponse =>{
+			console.log(reponse.data);
+		})
+		.catch(err =>{
+			console.log(err);
+		})
+	</script>
+</body>
+```
+
+### symbol
+
+生成唯一标识符
+
+const sanmu = Symbol();
+const zm = Symbol();
+sanmu == zm //false
+
+Object.getOwnPropertySymbols(对象) 可以遍历出symbol 属性
+
+### esLint
+代码监测根据
