@@ -286,4 +286,60 @@ sanmu == zm //false
 Object.getOwnPropertySymbols(对象) 可以遍历出symbol 属性
 
 ### esLint
-代码监测根据
+代码监测工具
+
+### 模块
+export import
+
+config.js
+
+```
+export const appKey = 'abc123'  //命名导出，可以多个导出
+export default appKey; //默认导出 只能一个导出
+
+```
+
+app.js
+
+```
+import app_key from './config'  //默认导出名字可以替换掉
+import { appKey as app_key }from './config'  //命名导出名称可以通过as更改
+
+console.log(appKey);
+
+```
+
+### babel
+将es6的语法转换为es5
+
+### class
+
+类的声明
+类的表达式
+
+```
+class User {
+  constructor(name, email){
+    this.name = name;
+    this.email = email;
+  }
+
+  name(){
+    console.log(this.name);
+  }
+
+  static des(){
+    console.log(‘静态方法’);
+  }
+
+  set age(value) {
+    this.age = value;
+  }
+
+  get age() {
+    return this.age
+  }
+
+}
+
+```
