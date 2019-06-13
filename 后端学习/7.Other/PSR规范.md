@@ -73,3 +73,6 @@ class Foo extends Bar implements FooInterface
 - 下划线在全限定类名中没有任何特殊含义（在 PSR-0 中下划是有含义的）。
 - 全限定类名可以是任意大小写字母的组合。
 - 所有类名的引用必须区分大小写。
+
+### composer自动加载
+[深入解析 composer 的自动加载原理](https://segmentfault.com/a/1190000014948542)
